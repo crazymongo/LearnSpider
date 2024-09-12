@@ -22,10 +22,8 @@ class BloggerSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response: Response, **kwargs: Any):
-        # blog_list = response.css("div.blog-posts").getall()
         blog_list = response.xpath("//div[@class='blog-posts hfeed']/div")
         for blog in blog_list:
-            # selector = Selector(text=blog)
             time = blog.xpath("h2[@class='date-header']/span/text()").get()
             posts = blog.xpath("div[@class='date-posts']/div")
             for post in posts:
@@ -39,9 +37,7 @@ class BloggerSpider(scrapy.Spider):
                 blog_item['content'] = ("\n".join(content)).strip()
                 yield blog_item
 
-        self.num += 1
-        if self.num < 2:
-            next_url = response.xpath("//a[@id='Blog1_blog-pager-older-link']/@href").get()
-            # request = scrapy.Request(url=next_url, callback=self.parse)
-            # query = parse_url(next_url).query
+        older_link = response.xpath("//a[@id='Blog1_blog-pager-older-link']")
+        if len(older_link) > 0:
+            next_url = older_link.xpath('@href').get()
             yield scrapy.Request(next_url, callback=self.parse)

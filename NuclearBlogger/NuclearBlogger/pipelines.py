@@ -15,10 +15,10 @@ class NuclearbloggerPipeline:
         tmp = os.path.curdir + os.path.sep + "result"
         if not os.path.exists(tmp):
             os.makedirs(tmp)
-        value = item['title'].text.replace('/', '、')
+        value = item['title'].replace('/', '、')
         with open(tmp + os.path.sep + value + ".txt", "a+") as f:
-            f.write(item['title'].text)
+            f.write(item['title'])
             f.write("\n\n")
-            f.write(item['content'].text)
+            f.write(item['content'])
             f.close()
         return item
