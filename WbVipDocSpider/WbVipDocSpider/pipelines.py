@@ -3,6 +3,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 import os.path
+from pathlib import Path
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
@@ -22,12 +23,12 @@ class WbvipdocspiderPipeline:
                 f.write("\n\n")
                 f.write(item['content'].text)
                 f.close()
-                with open("complete_set.txt", "a+") as tmp:
+                with open(Path(__file__).resolve().parent.joinpath("complete_set.txt"), "a+") as tmp:
                     tmp.write(item['url'])
                     tmp.write("\n")
                     tmp.close()
         else:
-            with open("fail_set.txt", "a+") as f:
+            with open(Path(__file__).resolve().parent.joinpath("fail_set.txt"), "a+") as f:
                 f.write(item['url'])
                 f.write("\n")
                 f.write(item['error_msg'])

@@ -1,5 +1,6 @@
 import json
 import os.path
+from pathlib import Path
 from typing import Any
 
 import scrapy
@@ -18,13 +19,15 @@ class WeiboVipDocSpider(scrapy.Spider):
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
         complete_set = list()
-        with open("complete_set.txt", "r") as f:
+        cur_file = Path(__file__).resolve()
+
+        with open(cur_file.parent.parent.joinpath("complete_set.txt"), "r") as f:
             while line := f.readline():
                 complete_set.append(line.strip())
             f.close()
 
         self.start_urls = list()
-        with open("contentlist_test.json", "r") as f:
+        with open(cur_file.parent.parent.joinpath("contentlist.json"), "r") as f:
             json_data = json.load(f)
             json_data_list = json_data.get("data").get("list")
 
@@ -47,7 +50,7 @@ class WeiboVipDocSpider(scrapy.Spider):
 
     def parse(self, response: Response, **kwargs: Any):
         self.driver.get(response.url)
-        with open("cookies.txt", 'r') as f:
+        with open(Path(__file__).resolve().parent.parent.joinpath("cookies.txt"), 'r') as f:
             cookies = json.load(f)
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
